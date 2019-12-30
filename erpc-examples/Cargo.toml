@@ -1,0 +1,19 @@
+[package]
+name = "erpc-examples"
+version = "0.1.0"
+authors = ["Frank Zhou <529808348@qq.com>"]
+edition = "2018"
+
+# See more keys and their definitions at https://doc.rust-lang.org/cargo/reference/manifest.html
+
+[dependencies]
+erpc-sys = { version="0.1.0", path = "../erpc-sys" }
+libc = "0.2.0"
+
+[[bin]]
+name = "client"
+path = "src/client.rs"
+
+[[bin]]
+name = "server"
+path = "src/server.rs"

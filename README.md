@@ -1,2 +1,2 @@
 # erpc-rs
-erpc library for Rust
+eRPC library for Rust
