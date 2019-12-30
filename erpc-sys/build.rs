@@ -19,7 +19,7 @@ fn main() {
         .warnings(false)
         .compile("erpc_ffi");
 
-    println!("cargo:rustc-link-search=native={}", "/home/frank/eRPC/build");
+    println!("cargo:rustc-link-search=native={}", Path::new(&home_dir).join("eRPC/build").display());
 
     println!("cargo:rustc-link-lib=erpc");
     println!("cargo:rustc-link-lib=pthread");
