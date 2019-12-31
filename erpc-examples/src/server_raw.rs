@@ -1,9 +1,7 @@
 use erpc_sys::ffi;
 use std::os::raw::{c_int, c_void};
+use std::ffi::CString;
 use libc::{size_t};
-use erpc_rs::context::AppContext;
-use erpc_rs::rpc::Rpc;
-use erpc_rs::nexus::Nexus;
 
 extern fn req_handler(req_handle: *mut ffi::ReqHandle, context: *mut c_void) -> () {
     println!("req_handler start");
@@ -29,14 +27,22 @@ extern fn sm_handler(_session_num: c_int, _sm_event_type: ffi::SmEventType, _sm_
 fn main() {
     // sudo rxe_cfg start
     // sudo rxe_cfg status
-    let context = AppContext::new();
-    let mut nexus = Nexus::new("127.0.0.1:31850".to_string(), 0, 0);
+    //let context = AppContext{};
+    unsafe {
+        let context = ffi::app_context_new();
 
-    nexus.register_req_func(1, req_handler, 0);
+        let local_uri = CString::new("127.0.0.1:31850").unwrap();
+        let nexus = ffi::erpc_nexus_new(local_uri.as_ptr(), 0, 0);
+        ffi::erpc_nexus_register_req_func(nexus, 1, req_handler, 0);
+        let rpc = ffi::erpc_rpc_new(nexus, context, 0, sm_handler, 0);
 
-    let mut rpc = Rpc::new(&context, &nexus, 0, sm_handler, 0);
+        loop {
+            ffi::erpc_rpc_run_event_loop(rpc, 1000);
+        }
 
-    loop {
-        rpc.run_event_loop(1000);
+        //ffi::erpc_rpc_destroy(rpc);
+        //ffi::erpc_nexus_destroy(nexus);
+        //ffi::app_context_destroy(context);
     }
+    //println!("OK!");
 }

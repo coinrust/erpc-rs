@@ -8,6 +8,7 @@ edition = "2018"
 
 [dependencies]
 erpc-sys = { version="0.1.0", path = "../erpc-sys" }
+erpc-rs = { version="0.1.0", path = "../" }
 libc = "0.2.0"
 
 [[bin]]
@@ -17,3 +18,11 @@ path = "src/client.rs"
 [[bin]]
 name = "server"
 path = "src/server.rs"
+
+[[bin]]
+name = "client_raw"
+path = "src/client_raw.rs"
+
+[[bin]]
+name = "server_raw"
+path = "src/server_raw.rs"
