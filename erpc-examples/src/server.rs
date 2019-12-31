@@ -1,24 +1,20 @@
 use erpc_sys::ffi;
 use std::os::raw::{c_int, c_void};
-use libc::{size_t};
 use erpc_rs::context::AppContext;
-use erpc_rs::rpc::Rpc;
 use erpc_rs::nexus::Nexus;
+use erpc_rs::reqhandle::ReqHandle;
+use erpc_rs::rpc::Rpc;
 
 extern fn req_handler(req_handle: *mut ffi::ReqHandle, context: *mut c_void) -> () {
     println!("req_handler start");
-    let data: *mut u8;
-    let data_size : size_t = 0;
-    unsafe { data = ffi::erpc_get_req_msgbuf(req_handle, &data_size) };
-    //println!("data_size: {:?} {}", data, data_size);
+    let mut req_handle = ReqHandle::from_raw(req_handle);
+    let s = req_handle.get_req_msgbuf();
+    println!("req: {}", String::from_utf8(s).expect(""));
 
-    let s = unsafe { String::from_raw_parts(data, data_size, 0) };
-    println!("req: {}", s);
-
-    let ctx: *mut ffi::AppContext = context as *mut ffi::AppContext;
-    let _rpc = unsafe { ffi::app_context_rpc(ctx) };
-    let s = "world".to_string();
-    unsafe { ffi::erpc_enqueue_response(_rpc, req_handle, s.as_ptr(), s.len()) };
+    let c = AppContext::from_raw(context);
+    let mut r = Rpc::from_context(&c);
+    let s = "world".to_string().into_bytes();
+    r.enqueue_response(&req_handle, s);
     println!("req_handler end");
 }
 

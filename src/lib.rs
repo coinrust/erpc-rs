@@ -1,5 +1,6 @@
 pub mod context;
 pub mod nexus;
+pub mod reqhandle;
 pub mod rpc;
 
 #[cfg(test)]
