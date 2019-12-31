@@ -16,6 +16,11 @@ extern fn cont_func(_context: *mut c_void, tag: *mut c_void) {
     let s = context.get_resp_msgbuf(tag);
     let s = String::from_utf8(s).expect("");
     println!("cont_func tag: {} resp: {}", tag, s);
+
+    let session_num = 0;
+    let mut rpc = Rpc::from_context(&context);
+    let s = "hello".to_string().into_bytes();
+    rpc.enqueue_request(&context, session_num, 1, s, cont_func, 1000, 0);
 }
 
 fn main() {

@@ -92,7 +92,7 @@ uint8_t *erpc_get_req_msgbuf(erpc::ReqHandle *req_handle, size_t &data_size) {
 void erpc_enqueue_request(AppContext *context, erpc::Rpc<erpc::CTransport> *rpc, int session_num, uint8_t req_type,
         const uint8_t *data, size_t data_size, erpc::erpc_cont_func_t cont_func, size_t tag, size_t cont_etid) {
     context->req_msgbuf = rpc->alloc_msg_buffer_or_die(data_size);
-    context->resp_msgbuf = rpc->alloc_msg_buffer_or_die(rpc->get_max_msg_size());
+    context->resp_msgbuf = rpc->alloc_msg_buffer_or_die(256); // rpc->get_max_msg_size()
 
     memcpy(context->req_msgbuf.buf, data, data_size);
 
