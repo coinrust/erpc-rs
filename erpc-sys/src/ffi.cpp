@@ -9,6 +9,7 @@
 class AppContext {
 public:
     erpc::Rpc<erpc::CTransport> *rpc = nullptr;
+    int session_num = 0;
     erpc::MsgBuffer req_msgbuf;
     erpc::MsgBuffer resp_msgbuf;
 
@@ -48,6 +49,10 @@ erpc::Rpc<erpc::CTransport> *app_context_rpc(AppContext *context) {
     return context->rpc;
 }
 
+int app_context_get_session_num(AppContext *context) {
+    return context->session_num;
+}
+
 erpc::Rpc<erpc::CTransport> *erpc_rpc_new(erpc::Nexus *nexus, AppContext *context, uint8_t rpc_id,
         erpc::sm_handler_t sm_handler,
         uint8_t phy_port) {
@@ -64,10 +69,11 @@ void erpc_rpc_destroy(erpc::Rpc<erpc::CTransport> *rpc) {
     }
 }
 
-int erpc_connect_session(erpc::Rpc<erpc::CTransport> *rpc, const char* server_uri, uint8_t rem_rpc_id) {
-    int session_num = rpc->create_session(server_uri, rem_rpc_id);
+int erpc_connect_session(AppContext *context, const char* server_uri, uint8_t rem_rpc_id) {
+    int session_num = context->rpc->create_session(server_uri, rem_rpc_id);
     erpc::rt_assert(session_num >= 0, "Failed to create session");
     //printf("session_num %d\n", session_num);
+    context->session_num = session_num;
     return session_num;
 }
 

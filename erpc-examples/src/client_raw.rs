@@ -4,7 +4,7 @@ use std::ffi::CString;
 //use std::thread;
 use libc::{size_t};
 
-extern fn sm_handler(session_num: c_int, sm_event_type: ffi::SmEventType, sm_err_type: ffi::SmErrType, context: *mut c_void) {
+extern fn sm_handler_raw(session_num: c_int, sm_event_type: ffi::SmEventType, sm_err_type: ffi::SmErrType, context: *mut c_void) {
     println!("sm_handler session_num: {} sm_event_type: {} sm_err_type: {}", session_num, sm_event_type, sm_err_type);
     let _ctx: *mut ffi::AppContext = context as *mut ffi::AppContext;
 }
@@ -29,10 +29,10 @@ fn main() {
 
         let local_uri = CString::new("127.0.0.1:31851").unwrap();
         let nexus = ffi::erpc_nexus_new(local_uri.as_ptr(), 0, 0);
-        let rpc = ffi::erpc_rpc_new(nexus, context, 0, sm_handler, 0);
+        let rpc = ffi::erpc_rpc_new(nexus, context, 0, sm_handler_raw, 0);
 
         let server_uri = CString::new("127.0.0.1:31850").unwrap();
-        let session_num = ffi::erpc_connect_session(rpc, server_uri.as_ptr(), 0);
+        let session_num = ffi::erpc_connect_session(context, server_uri.as_ptr(), 0);
         println!("session_num: {}", session_num);
 
         // while (!rpc->is_connected(session_num)) rpc->run_event_loop_once();

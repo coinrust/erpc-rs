@@ -1,5 +1,6 @@
 use erpc_sys::ffi::{self};
 use std::os::raw::{c_void};
+use std::ffi::CString;
 
 pub struct AppContext {
     pub inner: *mut ffi::AppContext,
@@ -20,6 +21,15 @@ impl AppContext {
             inner: context,
             owner: false,
         }
+    }
+
+    pub fn get_session_num(&mut self) -> i32 {
+        unsafe { ffi::app_context_get_session_num(self.inner) }
+    }
+
+    pub fn connect_session(&mut self, server_uri: String, rem_rpc_id: u8) -> i32 {
+        let server_uri = CString::new(server_uri).expect("");
+        unsafe { ffi::erpc_connect_session(self.inner, server_uri.as_ptr(), rem_rpc_id) }
     }
 
     pub fn get_resp_msgbuf(&mut self, _tag: usize) -> Vec<u8> {

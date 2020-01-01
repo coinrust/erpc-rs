@@ -27,7 +27,6 @@ extern fn sm_handler(_session_num: c_int, _sm_event_type: ffi::SmEventType, _sm_
 fn main() {
     // sudo rxe_cfg start
     // sudo rxe_cfg status
-    //let context = AppContext{};
     unsafe {
         let context = ffi::app_context_new();
 

@@ -65,12 +65,13 @@ extern "C" {
     pub fn app_context_new() -> *mut AppContext;
     pub fn app_context_destroy(ctx: *mut AppContext) -> ();
     pub fn app_context_rpc(context: *mut AppContext) -> *mut Rpc;
+    pub fn app_context_get_session_num(context: *mut AppContext) -> i32;
 
     // typedef void (*sm_handler_t)(int, SmEventType, SmErrType, void *);
     pub fn erpc_rpc_new(nexus: *mut Nexus, context: *mut AppContext, rpc_id: u8,
                         sm_handler: extern fn(c_int, SmEventType, SmErrType, *mut c_void), phy_port: u8) -> *mut Rpc;
     pub fn erpc_rpc_destroy(rpc: *mut Rpc) -> ();
-    pub fn erpc_connect_session(rpc: *mut Rpc, server_uri: *const c_char, rem_rpc_id: u8) -> c_int;
+    pub fn erpc_connect_session(context: *mut AppContext, server_uri: *const c_char, rem_rpc_id: u8) -> c_int;
     pub fn erpc_rpc_is_connected(rpc: *mut Rpc, session_num: c_int) -> bool;
     pub fn erpc_run_event_loop_once(rpc: *mut Rpc) -> ();
     pub fn erpc_rpc_run_event_loop(rpc: *mut Rpc, timeout_ms: size_t) -> ();

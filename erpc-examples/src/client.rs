@@ -17,18 +17,18 @@ extern fn cont_func(_context: *mut c_void, tag: *mut c_void) {
     let s = String::from_utf8(s).expect("");
     println!("cont_func tag: {} resp: {}", tag, s);
 
-    let session_num = 0;
+    let session_num = context.get_session_num();
     let mut rpc = Rpc::from_context(&context);
     let s = "hello".to_string().into_bytes();
     rpc.enqueue_request(&context, session_num, 1, s, cont_func, 1000, 0);
 }
 
 fn main() {
-    let context = AppContext::new();
+    let mut context = AppContext::new();
     let nexus = Nexus::new("127.0.0.1:31851".to_string(), 0, 0);
     let mut rpc = Rpc::new(&context, &nexus, 0, sm_handler, 0);
 
-    let session_num = rpc.connect_session("127.0.0.1:31850".to_string(), 0);
+    let session_num = context.connect_session("127.0.0.1:31850".to_string(), 0);
 
     println!("session_num: {}", session_num);
 

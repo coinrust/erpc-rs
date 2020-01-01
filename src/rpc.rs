@@ -1,6 +1,5 @@
 use erpc_sys::ffi::{self};
 use std::os::raw::{c_int, c_void};
-use std::ffi::CString;
 use crate::context::AppContext;
 use crate::nexus::Nexus;
 use crate::reqhandle::ReqHandle;
@@ -14,17 +13,12 @@ impl Rpc {
     pub fn new(context: &AppContext, nexus: &Nexus, rpc_id: u8,
                       sm_handler: extern fn(c_int, ffi::SmEventType, ffi::SmErrType, *mut c_void), phy_port: u8) -> Self {
         let rpc = unsafe { ffi::erpc_rpc_new(nexus.inner, context.inner, rpc_id, sm_handler, phy_port) };
-        Rpc{inner: rpc, owner: true}
+        Rpc{ inner: rpc, owner: true }
     }
 
     pub fn from_context(context: &AppContext) -> Self {
         let rpc = unsafe { ffi::app_context_rpc(context.inner) };
-        Rpc{inner: rpc, owner: false}
-    }
-
-    pub fn connect_session(&mut self, server_uri: String, rem_rpc_id: u8) -> i32 {
-        let server_uri = CString::new(server_uri).expect("");
-        unsafe { ffi::erpc_connect_session(self.inner, server_uri.as_ptr(), rem_rpc_id) }
+        Rpc{ inner: rpc, owner: false }
     }
 
     pub fn is_connected(&mut self, session_num: i32) -> bool {
