@@ -9,7 +9,7 @@ edition = "2018"
 [dependencies]
 erpc-sys = { version="0.1.0", path = "../erpc-sys" }
 erpc-rs = { version="0.1.0", path = "../" }
-libc = "0.2.0"
+libc = "0.2"
 
 [[bin]]
 name = "client"
