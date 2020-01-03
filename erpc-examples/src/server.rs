@@ -7,12 +7,12 @@ use erpc_rs::rpc::Rpc;
 
 extern fn req_handler(req_handle: *mut ffi::ReqHandle, context: *mut c_void) -> () {
     println!("req_handler start");
-    let mut req_handle = ReqHandle::from_raw(req_handle);
+    let req_handle = ReqHandle::from_raw(req_handle);
     let s = req_handle.get_req_msgbuf();
     println!("req: {}", String::from_utf8(s).expect(""));
 
     let c = AppContext::from_raw(context);
-    let mut r = Rpc::from_context(&c);
+    let r = Rpc::from_context(&c);
     let s = "world".to_string().into_bytes();
     r.enqueue_response(&req_handle, s);
     println!("req_handler end");
@@ -26,11 +26,11 @@ fn main() {
     // sudo rxe_cfg start
     // sudo rxe_cfg status
     let context = AppContext::new();
-    let mut nexus = Nexus::new("127.0.0.1:31850".to_string(), 0, 0);
+    let nexus = Nexus::new("127.0.0.1:31850".to_string(), 0, 0);
 
     nexus.register_req_func(1, req_handler, 0);
 
-    let mut rpc = Rpc::new(&context, &nexus, 0, sm_handler, 0);
+    let rpc = Rpc::new(&context, &nexus, 0, sm_handler, 0);
 
     loop {
         rpc.run_event_loop(1000);

@@ -14,7 +14,7 @@ impl Nexus {
         }
     }
 
-    pub fn register_req_func(&mut self, req_type: u8,
+    pub fn register_req_func(&self, req_type: u8,
                              req_func: extern fn(*mut ffi::ReqHandle, *mut c_void) -> (),
                              req_func_type: u8) {
         unsafe { ffi::erpc_nexus_register_req_func(self.inner, req_type, req_func, req_func_type) }

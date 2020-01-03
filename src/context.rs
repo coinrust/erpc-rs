@@ -23,16 +23,16 @@ impl AppContext {
         }
     }
 
-    pub fn get_session_num(&mut self) -> i32 {
+    pub fn get_session_num(&self) -> i32 {
         unsafe { ffi::app_context_get_session_num(self.inner) }
     }
 
-    pub fn connect_session(&mut self, server_uri: String, rem_rpc_id: u8) -> i32 {
+    pub fn connect_session(&self, server_uri: String, rem_rpc_id: u8) -> i32 {
         let server_uri = CString::new(server_uri).expect("");
         unsafe { ffi::erpc_connect_session(self.inner, server_uri.as_ptr(), rem_rpc_id) }
     }
 
-    pub fn get_resp_msgbuf(&mut self, _tag: usize) -> Vec<u8> {
+    pub fn get_resp_msgbuf(&self, _tag: usize) -> Vec<u8> {
         let data: *mut u8;
         let data_size : usize = 0;
         unsafe { data = ffi::erpc_get_resp_msgbuf(self.inner, &data_size) };
