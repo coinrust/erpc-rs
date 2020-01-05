@@ -1,6 +1,14 @@
 # erpc-rs
 eRPC library for Rust
 
+# Installing rdma-core
+```
+curl -s https://packagecloud.io/install/repositories/linux-rdma/rdma-core/script.deb.sh | sudo bash
+sudo apt install rdma-core
+# start
+sudo rxe_cfg start
+```
+
 # Installing junction & turf
 ```
 $ git clone https://github.com/preshing/junction.git
