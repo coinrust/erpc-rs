@@ -32,15 +32,15 @@ impl AppContext {
         unsafe { ffi::erpc_connect_session(self.inner, server_uri.as_ptr(), rem_rpc_id) }
     }
 
-    pub fn get_resp_msgbuf(&self, _tag: usize) -> Vec<u8> {
-        let data: *mut u8;
-        let data_size : usize = 0;
-        unsafe { data = ffi::erpc_get_resp_msgbuf(self.inner, &data_size) };
-        //println!("data_size: {:?} {}", data, data_size);
+    // pub fn get_resp_msgbuf(&self, tag: usize) -> Vec<u8> {
+    //     let data: *mut u8;
+    //     let data_size : usize = 0;
+    //     unsafe { data = ffi::erpc_get_resp_msgbuf(self.inner, tag, &data_size) };
+    //     //println!("data_size: {:?} {}", data, data_size);
 
-        let s = unsafe { String::from_raw_parts(data, data_size, 0) };
-        s.into_bytes()
-    }
+    //     let s = unsafe { String::from_raw_parts(data, data_size, 0) };
+    //     s.into_bytes()
+    // }
 }
 
 impl Drop for AppContext {

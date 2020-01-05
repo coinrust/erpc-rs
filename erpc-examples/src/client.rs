@@ -1,8 +1,11 @@
 use erpc_sys::ffi;
 use std::os::raw::{c_int, c_void};
 use erpc_rs::context::AppContext;
+use erpc_rs::msgbuffs;
 use erpc_rs::rpc::Rpc;
 use erpc_rs::nexus::Nexus;
+
+use msgbuffs::MsgBuffers;
 
 extern fn sm_handler(session_num: c_int, sm_event_type: ffi::SmEventType, sm_err_type: ffi::SmErrType, context: *mut c_void) {
     println!("sm_handler session_num: {} sm_event_type: {} sm_err_type: {}", session_num, sm_event_type, sm_err_type);
@@ -13,7 +16,9 @@ extern fn cont_func(_context: *mut c_void, tag: *mut c_void) {
     let context = AppContext::from_raw(_context);
     let tag = tag as usize;
 
-    let s = context.get_resp_msgbuf(tag);
+    let msg_buffs = MsgBuffers::from_context(&context, tag);
+    let s = msg_buffs.get_resp_msgbuf();
+    //let s = context.get_resp_msgbuf(tag);
     let s = String::from_utf8(s).expect("");
     println!("cont_func tag: {} resp: {}", tag, s);
 

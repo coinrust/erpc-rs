@@ -4,6 +4,7 @@ use libc::{size_t};
 pub enum Nexus {} // erpc::Nexus
 pub enum ReqHandle {} // erpc::ReqHandle
 pub enum AppContext {} // AppContext
+pub enum MsgBuffers {} // MsgBuffers
 pub enum Rpc {} // erpc::Rpc<erpc::CTransport>
 
 unsafe impl Send for Rpc {}
@@ -81,7 +82,11 @@ extern "C" {
                                 data_size: size_t, cont_func: extern fn(*mut c_void, *mut c_void),
                                 tag: size_t, cont_etid: size_t) -> ();
     pub fn erpc_enqueue_response(rpc: *mut Rpc, req_handle: *mut ReqHandle, data: *const u8, data_size: size_t) -> ();
-    pub fn erpc_get_resp_msgbuf(context: *mut AppContext, data_size: &size_t) -> *mut u8;
+
+    pub fn erpc_msgbuffs_get_by_tag(context: *mut AppContext, tag: size_t) -> *mut MsgBuffers;
+    pub fn erpc_msgbuffs_destroy(buffs: *mut MsgBuffers) -> ();
+    pub fn erpc_msgbuffs_req_msgbuf(buffs: *mut MsgBuffers, data_size: &size_t) -> *mut u8;
+    pub fn erpc_msgbuffs_resp_msgbuf(buffs: *mut MsgBuffers, data_size: &size_t) -> *mut u8;
 
     pub fn server_test() -> c_int;
     pub fn client_test() -> c_int;

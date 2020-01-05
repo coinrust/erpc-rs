@@ -5,15 +5,31 @@
 #include "util/numautils.h"
 #include "transport_impl/eth_common.h"
 #include "rpc_types.h"
+#include <junction/ConcurrentMap_Leapfrog.h>
+
+class MsgBuffers {
+public:
+    erpc::MsgBuffer req_msgbuf;
+    erpc::MsgBuffer resp_msgbuf;
+};
+
+typedef junction::ConcurrentMap_Leapfrog<size_t, MsgBuffers*> ConcurrentMap;
 
 class AppContext {
 public:
     erpc::Rpc<erpc::CTransport> *rpc = nullptr;
     int session_num = 0;
-    erpc::MsgBuffer req_msgbuf;
-    erpc::MsgBuffer resp_msgbuf;
+    ConcurrentMap msgbufs;
 
     ~AppContext() {}
+
+    inline MsgBuffers *alloc_msg_buffer_or_die(size_t req_id, size_t req_max_data_size, size_t resp_max_data_size) {
+        MsgBuffers *buffs = new MsgBuffers();
+        buffs->req_msgbuf = rpc->alloc_msg_buffer_or_die(req_max_data_size);
+        buffs->resp_msgbuf = rpc->alloc_msg_buffer_or_die(resp_max_data_size);
+        msgbufs.assign(req_id, buffs);
+        return buffs;
+    }
 };
 
 extern "C" {
@@ -97,13 +113,12 @@ uint8_t *erpc_get_req_msgbuf(erpc::ReqHandle *req_handle, size_t &data_size) {
 
 void erpc_enqueue_request(AppContext *context, erpc::Rpc<erpc::CTransport> *rpc, int session_num, uint8_t req_type,
         const uint8_t *data, size_t data_size, erpc::erpc_cont_func_t cont_func, size_t tag, size_t cont_etid) {
-    context->req_msgbuf = rpc->alloc_msg_buffer_or_die(data_size);
-    context->resp_msgbuf = rpc->alloc_msg_buffer_or_die(256); // rpc->get_max_msg_size()
+    auto buffs = context->alloc_msg_buffer_or_die(tag, data_size, 1024);
 
-    memcpy(context->req_msgbuf.buf, data, data_size);
+    memcpy(buffs->req_msgbuf.buf, data, data_size);
 
-    rpc->enqueue_request(session_num, 1, &context->req_msgbuf,
-                           &context->resp_msgbuf, cont_func, reinterpret_cast<void *>(tag)); // nullptr
+    rpc->enqueue_request(session_num, 1, &buffs->req_msgbuf,
+                           &buffs->resp_msgbuf, cont_func, reinterpret_cast<void *>(tag)); // nullptr
 }
 
 void erpc_enqueue_response(erpc::Rpc<erpc::CTransport> *rpc, erpc::ReqHandle *req_handle, const uint8_t *data,
@@ -115,9 +130,30 @@ void erpc_enqueue_response(erpc::Rpc<erpc::CTransport> *rpc, erpc::ReqHandle *re
     rpc->enqueue_response(req_handle, &resp);
 }
 
-uint8_t *erpc_get_resp_msgbuf(AppContext *context, size_t &data_size) {
-    data_size = context->resp_msgbuf.get_data_size();
-    return context->resp_msgbuf.buf;
+MsgBuffers *erpc_msgbuffs_get_by_tag(AppContext *context, size_t tag) {
+    auto item = context->msgbufs.get(tag);
+    if (item == nullptr) {
+        return nullptr;
+    }
+    context->msgbufs.erase(tag);
+    return item;
+}
+
+void erpc_msgbuffs_destroy(MsgBuffers *buffs) {
+    if (buffs != nullptr) {
+        delete buffs;
+        buffs = nullptr;
+    }
+}
+
+uint8_t *erpc_msgbuffs_req_msgbuf(MsgBuffers *buffs, size_t &data_size) {
+    data_size = buffs->req_msgbuf.get_data_size();
+    return buffs->req_msgbuf.buf;
+}
+
+uint8_t *erpc_msgbuffs_resp_msgbuf(MsgBuffers *buffs, size_t &data_size) {
+    data_size = buffs->resp_msgbuf.get_data_size();
+    return buffs->resp_msgbuf.buf;
 }
 
 }

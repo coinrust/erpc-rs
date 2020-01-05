@@ -12,6 +12,7 @@ fn main() {
         .flag("-std=c++11") // -std=c++1y
         .flag("-DERPC_INFINIBAND=true")
         .include(Path::new( &home_dir ).join("eRPC/src"))
+        .include(Path::new( &home_dir ).join("junction-install/include"))
         .include("src")
         .file("src/ffi.cpp")
         .file("src/server.cpp")
@@ -20,12 +21,16 @@ fn main() {
         .compile("erpc_ffi");
 
     println!("cargo:rustc-link-search=native={}", Path::new(&home_dir).join("eRPC/build").display());
+    println!("cargo:rustc-link-search=native={}", Path::new(&home_dir).join("junction-install/lib").display());
 
     println!("cargo:rustc-link-lib=erpc");
     println!("cargo:rustc-link-lib=pthread");
     println!("cargo:rustc-link-lib=numa");
     println!("cargo:rustc-link-lib=dl");
     println!("cargo:rustc-link-lib=ibverbs");
+
+    println!("cargo:rustc-link-lib=junction");
+    println!("cargo:rustc-link-lib=turf");
 
     println!("cargo:rerun-if-changed=src/*");
     println!("cargo:rerun-if-changed=build.rs");

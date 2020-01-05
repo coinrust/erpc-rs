@@ -15,11 +15,13 @@ extern fn cont_func(_context: *mut c_void, _tag: *mut c_void) {
 
     let data: *mut u8;
     let data_size : size_t = 0;
-    unsafe { data = ffi::erpc_get_resp_msgbuf(ctx, &data_size) };
-    //println!("data_size: {:?} {}", data, data_size);
+    let msgbufs = unsafe { ffi::erpc_msgbuffs_get_by_tag(ctx, tag) };
+    data = unsafe { ffi::erpc_msgbuffs_resp_msgbuf(msgbufs, &data_size) };
 
     let s = unsafe { String::from_raw_parts(data, data_size, 0) };
     println!("cont_func tag: {} resp: {}", tag, s);
+
+    unsafe { ffi::erpc_msgbuffs_destroy(msgbufs) };
 }
 
 fn main() {
