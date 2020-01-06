@@ -26,3 +26,11 @@ path = "src/client_raw.rs"
 [[bin]]
 name = "server_raw"
 path = "src/server_raw.rs"
+
+[[bin]]
+name = "client_test"
+path = "src/client_test.rs"
+
+[[bin]]
+name = "server_test"
+path = "src/server_test.rs"

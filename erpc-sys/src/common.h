@@ -12,6 +12,10 @@ static constexpr size_t kMsgSize = 16;
 class AppContext {
 public:
     erpc::Rpc<erpc::CTransport> *rpc = nullptr;
+    size_t thread_id;
+    int session_num;
+    erpc::MsgBuffer req;
+    erpc::MsgBuffer resp;
 
     ~AppContext() {}
 };

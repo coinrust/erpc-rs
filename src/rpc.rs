@@ -4,10 +4,19 @@ use crate::context::AppContext;
 use crate::nexus::Nexus;
 use crate::reqhandle::ReqHandle;
 
+
 pub struct Rpc {
     inner: *mut ffi::Rpc,
     owner: bool,
 }
+
+impl Clone for Rpc {
+    fn clone(&self) -> Rpc {
+        Rpc { inner: self.inner, owner: false }
+    }
+}
+
+unsafe impl Send for Rpc {}
 
 impl Rpc {
     pub fn new(context: &AppContext, nexus: &Nexus, rpc_id: u8,
