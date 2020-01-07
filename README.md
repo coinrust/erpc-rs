@@ -1,12 +1,19 @@
 # erpc-rs
 eRPC library for Rust
 
-# Installing rdma-core
+# Dependencies
+```
+sudo apt install libibverbs-dev libnuma-dev libgflags-dev libgtest-dev libboost-dev
+```
+
+# Installing rdma-core (Refer to [rdma-core Installation instructions](https://packagecloud.io/linux-rdma/rdma-core/install))
 ```
 curl -s https://packagecloud.io/install/repositories/linux-rdma/rdma-core/script.deb.sh | sudo bash
 sudo apt install rdma-core
 # start
 sudo rxe_cfg start
+# status
+sudo rxe_cfg status
 ```
 
 # Installing junction & turf
