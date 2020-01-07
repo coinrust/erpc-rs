@@ -1,5 +1,5 @@
-#include <stdio.h>
 #include "rpc.h"
+#include <stdio.h>
 
 static const std::string kServerHostname = "127.0.0.1";
 static const std::string kClientHostname = "127.0.0.1";
@@ -11,11 +11,11 @@ static constexpr size_t kMsgSize = 16;
 
 class AppContext {
 public:
-    erpc::Rpc<erpc::CTransport> *rpc = nullptr;
-    size_t thread_id;
-    int session_num;
-    erpc::MsgBuffer req;
-    erpc::MsgBuffer resp;
+  erpc::Rpc<erpc::CTransport> *rpc = nullptr;
+  size_t thread_id;
+  int session_num;
+  erpc::MsgBuffer req;
+  erpc::MsgBuffer resp;
 
-    ~AppContext() {}
+  ~AppContext() {}
 };

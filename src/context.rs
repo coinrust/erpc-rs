@@ -1,11 +1,22 @@
 use erpc_sys::ffi::{self};
-use std::os::raw::{c_void};
 use std::ffi::CString;
+use std::os::raw::c_void;
 
 pub struct AppContext {
     pub inner: *mut ffi::AppContext,
     owner: bool,
 }
+
+impl Clone for AppContext {
+    fn clone(&self) -> AppContext {
+        AppContext {
+            inner: self.inner,
+            owner: false,
+        }
+    }
+}
+
+unsafe impl Send for AppContext {}
 
 impl AppContext {
     pub fn new() -> Self {

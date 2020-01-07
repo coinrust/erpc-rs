@@ -7,8 +7,8 @@ edition = "2018"
 # See more keys and their definitions at https://doc.rust-lang.org/cargo/reference/manifest.html
 
 [dependencies]
-erpc-sys = { version="0.1.0", path = "../erpc-sys" }
-erpc-rs = { version="0.1.0", path = "../" }
+erpc-sys = { version="0.1", path = "../erpc-sys" }
+erpc-rs = { version="0.1", path = "../" }
 libc = "0.2"
 
 [[bin]]
