@@ -6,16 +6,19 @@ eRPC library for Rust
 sudo apt install libibverbs-dev libnuma-dev libgflags-dev libgtest-dev libboost-dev
 ```
 
-# Installing rdma-core (Refer to [rdma-core Installation instructions](https://packagecloud.io/linux-rdma/rdma-core/install))
+# Installing rdma-core
 ```
-curl -s https://packagecloud.io/install/repositories/linux-rdma/rdma-core/script.deb.sh | sudo bash
-sudo apt install rdma-core
+sudo apt install libibverbs-dev libibverbs1 rdma-core ibverbs-utils
 # start
 sudo rxe_cfg start
+  Name  Link  Driver     Speed  NMTU  IPv4_addr  RDEV  RMTU  
+  eth0  yes   hv_netvsc
 # add <interface_name>
-sudo rxe_cfg add <interface_name>
+sudo rxe_cfg add eth0
 # status
 sudo rxe_cfg status
+  Name  Link  Driver     Speed  NMTU  IPv4_addr  RDEV  RMTU          
+  eth0  yes   hv_netvsc                          rxe0  1024  (3)
 ```
 
 # Installing junction & turf
@@ -45,7 +48,7 @@ cd eRPC/
 cmake . -DPERF=OFF -DTRANSPORT=infiniband -DROCE=on; make -j;
 ```
 
-# Build
+# Build & Run
 ```
 # use -DERPC_INFINIBAND=true
 ERPC_INFINIBAND=true cargo build
@@ -55,6 +58,13 @@ ERPC_RAW=true cargo build
 
 # use -DERPC_DPDK=true
 ERPC_DPDK=true cargo build
+
+# Set up hugepages
+sudo bash -c "echo 1024 > /sys/devices/system/node/node0/hugepages/hugepages-2048kB/nr_hugepages"
+
+# Run
+sudo ./target/debug/server
+sudo ./target/debug/client
 ```
 
 # Server
