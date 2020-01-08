@@ -26,6 +26,7 @@ extern "C" fn sm_handler(
 }
 
 extern "C" fn cont_func(_context: *mut c_void, tag: *mut c_void) {
+    println!("cont_func start");
     let context = AppContext::from_raw(_context);
     let tag = tag as usize;
 
@@ -34,14 +35,10 @@ extern "C" fn cont_func(_context: *mut c_void, tag: *mut c_void) {
     let s = String::from_utf8(s).expect("");
     println!("cont_func tag: {} resp: {}", tag, s);
 
-    let session_num = context.get_session_num();
-    let rpc = Rpc::from_context(&context);
-    let s = "hello".to_string().into_bytes();
-    rpc.enqueue_request(&context, session_num, 1, s, cont_func, 1000, 0);
+    println!("cont_func end");
 }
 
 fn main() {
-    let context = AppContext::new();
     let nexus = Nexus::new(LOCAL_URI.to_string(), 0, 0);
 
     let mut wait_vec: Vec<JoinHandle<()>> = Vec::new();
@@ -49,7 +46,7 @@ fn main() {
     let num_threads = 2;
 
     for i in 0..num_threads {
-        let context = context.clone();
+        let context = AppContext::new();
         let nexus = nexus.clone();
 
         let handle = thread::spawn(move || {
@@ -65,9 +62,11 @@ fn main() {
 
             println!("connected");
 
-            let s = "hello".to_string().into_bytes();
-            rpc.enqueue_request(&context, session_num, 1, s, cont_func, 1000, 0);
-            rpc.run_event_loop(1000 * 5);
+            loop {
+                rpc.run_event_loop(1000);
+                let s = "hello".to_string().into_bytes();
+                rpc.enqueue_request(&context, session_num, 1, s, cont_func, 0, 8);
+            }
         });
 
         wait_vec.push(handle);

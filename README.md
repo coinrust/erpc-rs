@@ -102,31 +102,40 @@ extern "C" fn sm_handler(
     println!("sm_handler");
 }
 
-// sudo rxe_cfg start
-// sudo rxe_cfg status
-
 fn main() {
-    let context = AppContext::new();
     let nexus = Nexus::new(LOCAL_URI.to_string(), 0, 0);
-    nexus.register_req_func(1, req_handler, 0);
 
     let mut wait_vec: Vec<JoinHandle<()>> = Vec::new();
 
     let num_threads = 2;
 
     for i in 0..num_threads {
-        let context = context.clone();
+        let context = AppContext::new();
         let nexus = nexus.clone();
 
         let handle = thread::spawn(move || {
             let rpc = Rpc::new(&context, &nexus, i, sm_handler, 0);
+
+            let session_num = context.connect_session(SERVER_URI.to_string(), 0);
+
+            println!("session_num: {}", session_num);
+
+            while !rpc.is_connected(session_num) {
+                rpc.run_event_loop_once();
+            }
+
+            println!("connected");
+
             loop {
                 rpc.run_event_loop(1000);
+                let s = "hello".to_string().into_bytes();
+                rpc.enqueue_request(&context, session_num, 1, s, cont_func, 0, 8);
             }
         });
 
         wait_vec.push(handle);
     }
+
     for handle in wait_vec {
         handle.join().unwrap();
     }

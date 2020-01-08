@@ -93,7 +93,7 @@ void erpc_rpc_destroy(erpc::Rpc<erpc::CTransport> *rpc) {
 int erpc_connect_session(AppContext *context, const char *server_uri,
                          uint8_t rem_rpc_id) {
   int session_num = context->rpc->create_session(server_uri, rem_rpc_id);
-  erpc::rt_assert(session_num >= 0, "Failed to create session");
+  //erpc::rt_assert(session_num >= 0, "Failed to create session");
   // printf("session_num %d\n", session_num);
   context->session_num = session_num;
   return session_num;
