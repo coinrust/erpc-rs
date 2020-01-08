@@ -31,11 +31,7 @@ extern "C" fn sm_handler(
     println!("sm_handler");
 }
 
-// sudo rxe_cfg start
-// sudo rxe_cfg status
-
 fn main() {
-    let context = AppContext::new();
     let nexus = Nexus::new(LOCAL_URI.to_string(), 0, 0);
     nexus.register_req_func(1, req_handler, 0);
 
@@ -44,7 +40,7 @@ fn main() {
     let num_threads = 2;
 
     for i in 0..num_threads {
-        let context = context.clone();
+        let context = AppContext::new();
         let nexus = nexus.clone();
 
         let handle = thread::spawn(move || {
