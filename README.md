@@ -12,6 +12,8 @@ curl -s https://packagecloud.io/install/repositories/linux-rdma/rdma-core/script
 sudo apt install rdma-core
 # start
 sudo rxe_cfg start
+# add <interface_name>
+sudo rxe_cfg add <interface_name>
 # status
 sudo rxe_cfg status
 ```
