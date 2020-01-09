@@ -62,7 +62,10 @@ ERPC_DPDK=true cargo build
 # Set up hugepages
 sudo bash -c "echo 1024 > /sys/devices/system/node/node0/hugepages/hugepages-2048kB/nr_hugepages"
 
-# Run
+# Build examples
+cargo build -p erpc-examples
+
+# Run examples
 sudo ./target/debug/server
 sudo ./target/debug/client
 ```
