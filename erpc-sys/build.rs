@@ -58,7 +58,12 @@ fn main() {
     println!("cargo:rustc-link-lib=junction");
     println!("cargo:rustc-link-lib=turf");
 
-    println!("cargo:rerun-if-changed=src/*");
+    println!("cargo:rerun-if-changed=src/client.cpp");
+    println!("cargo:rerun-if-changed=src/common.h");
+    println!("cargo:rerun-if-changed=src/ffi.cpp");
+    println!("cargo:rerun-if-changed=src/ffi.rs");
+    println!("cargo:rerun-if-changed=src/lib.rs");
+    println!("cargo:rerun-if-changed=src/server.cpp");
     println!("cargo:rerun-if-changed=build.rs");
 }
 
