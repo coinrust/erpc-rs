@@ -1,6 +1,6 @@
 [package]
 name = "erpc-rs"
-version = "0.1.2"
+version = "0.2.0"
 authors = ["Frank Zhou <529808348@qq.com>"]
 edition = "2018"
 keywords = ["erpc", "rpc", "rust"]
@@ -12,10 +12,36 @@ license = "Apache-2.0"
 # See more keys and their definitions at https://doc.rust-lang.org/cargo/reference/manifest.html
 
 [dependencies]
-erpc-sys = { path = "erpc-sys", version = "0.1" }
+erpc-sys = { path = "erpc-sys", version = "0.2" }
+
+[dev-dependencies]
+libc = "0.2"
 
 [workspace]
 members = [
-    "erpc-examples",
 	"erpc-sys"
 ]
+
+[[example]]
+name = "client"
+path = "examples/client.rs"
+
+[[example]]
+name = "server"
+path = "examples/server.rs"
+
+[[example]]
+name = "client_raw"
+path = "examples/client_raw.rs"
+
+[[example]]
+name = "server_raw"
+path = "examples/server_raw.rs"
+
+[[example]]
+name = "client_test"
+path = "examples/client_test.rs"
+
+[[example]]
+name = "server_test"
+path = "examples/server_test.rs"
